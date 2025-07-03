@@ -11,6 +11,7 @@ from gensim.models import Word2Vec
 from sklearn.metrics.pairwise import cosine_similarity
 from collections import defaultdict
 import pygsheets
+import tempfile
 
 
 # Routing antar halaman
@@ -42,7 +43,23 @@ model_w2v = load_word2vec_model()
 vector_cols = [col for col in df_kafe.columns if col.startswith("dim_")]
 X_matrix = df_kafe[vector_cols].values
 
-file_json_handler = "kodeRahasia_jangandiShare.json"
+# file_json_handler = "kodeRahasia_jangandiShare.json"
+
+
+def buat_file_credential_sementara():
+    # Ambil secret dari st.secrets
+    json_key = dict(st.secrets["gcp_service_account"])
+
+    # Simpan ke file sementara
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".json", mode="w") as tmp:
+        json.dump(json_key, tmp)
+        return tmp.name  # Kembalikan path-nya
+
+
+cred_path = buat_file_credential_sementara()  # Buat file sementara
+
+gc = pygsheets.authorize(service_file=cred_path)  # Otentikasi
+
 
 
 # ========================
@@ -1205,12 +1222,14 @@ def cari_case_sama(casebase, keywords, preferensi_label):
 def baca_casebase_dari_gsheet(spreadsheet_id, sheet_name="Sheet2"):
     import pygsheets
     import json
+    from tempfile import NamedTemporaryFile
 
     try:
-        gc = pygsheets.authorize(service_file=file_json_handler)  # sesuaikan kalau deploy
-        sh = gc.open_by_key(spreadsheet_id)
-        wks = sh.worksheet_by_title(sheet_name)
-        df = wks.get_as_df()
+        json_key = dict(st.secrets["gcp_service_account"])
+        with NamedTemporaryFile(delete=False, suffix=".json", mode="w") as tmp:
+            json.dump(json_key, tmp)
+            gc = pygsheets.authorize(service_file=tmp.name)
+
 
         # Ubah kolom JSON string jadi dict/list
         json_cols = ["crs_keywords", "preferensi_label", "refine_added", "refine_excluded", "user_identity"]
@@ -1292,22 +1311,66 @@ def kirim_data_ke_gsheet(data_dict, spreadsheet_id, sheet_name="hasil_user_testi
         return False, f"❌ Gagal mengirim data ke Google Sheets: {e}"
 
 
+# def simpan_case_ke_gsheet_casebase(case_dict, spreadsheet_id, sheet_name="Sheet2"):
+#     import pygsheets
+#     import json
+#     from datetime import datetime
+
+#     try:
+#         gc = pygsheets.authorize(service_file=file_json_handler)  # ganti kalau udah deploy
+
+#         sh = gc.open_by_key(spreadsheet_id)
+#         wks = sh.worksheet_by_title(sheet_name)
+
+#         # Tambahkan timestamp kalau belum ada
+#         if "timestamp" not in case_dict:
+#             case_dict["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+#         # Format semua kolom jadi string / json string
+#         formatted = {}
+#         for k, v in case_dict.items():
+#             if v is None:
+#                 formatted[k] = "N/A"
+#             elif isinstance(v, (dict, list)):
+#                 formatted[k] = json.dumps(v, ensure_ascii=False)
+#             else:
+#                 formatted[k] = str(v)
+
+#         # Kirim ke GSheet (tambah baris)
+#         wks.append_table(list(formatted.values()), dimension="ROWS")
+#         return True, "✅ Case berhasil ditambahkan ke CaseBase."
+#     except Exception as e:
+#         return False, f"❌ Gagal menambahkan case ke GSheet: {e}"
+
+
 def simpan_case_ke_gsheet_casebase(case_dict, spreadsheet_id, sheet_name="Sheet2"):
     import pygsheets
     import json
+    import tempfile
     from datetime import datetime
+    import streamlit as st
 
     try:
-        gc = pygsheets.authorize(service_file=file_json_handler)  # ganti kalau udah deploy
+        # 🔐 Gunakan secrets saat di-deploy
+        if "gcp_service_account" in st.secrets:
+            json_key = dict(st.secrets["gcp_service_account"])
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".json", mode="w") as tmp:
+                json.dump(json_key, tmp)
+                service_file_path = tmp.name
+        else:
+            # 🧪 Untuk local dev, pakai file langsung
+            service_file_path = "client_secret.json"
 
+        # ✅ Autentikasi pygsheets
+        gc = pygsheets.authorize(service_file=service_file_path)
         sh = gc.open_by_key(spreadsheet_id)
         wks = sh.worksheet_by_title(sheet_name)
 
-        # Tambahkan timestamp kalau belum ada
+        # ⏱️ Tambahkan timestamp kalau belum ada
         if "timestamp" not in case_dict:
             case_dict["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # Format semua kolom jadi string / json string
+        # 📦 Format semua field jadi string
         formatted = {}
         for k, v in case_dict.items():
             if v is None:
@@ -1317,9 +1380,10 @@ def simpan_case_ke_gsheet_casebase(case_dict, spreadsheet_id, sheet_name="Sheet2
             else:
                 formatted[k] = str(v)
 
-        # Kirim ke GSheet (tambah baris)
+        # 📤 Append ke Google Sheets
         wks.append_table(list(formatted.values()), dimension="ROWS")
         return True, "✅ Case berhasil ditambahkan ke CaseBase."
+
     except Exception as e:
         return False, f"❌ Gagal menambahkan case ke GSheet: {e}"
 
