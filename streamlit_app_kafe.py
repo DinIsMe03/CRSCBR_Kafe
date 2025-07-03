@@ -804,13 +804,133 @@ def step_survey_2():
         st.rerun()
 
 
+# def step_pamit():
+#     st.subheader("🎉 Terima kasih telah berpartisipasi!")
+
+#     st.markdown("Berikut adalah rangkuman data dari seluruh proses yang telah kamu lalui:")
+
+#     gc = pygsheets.authorize(service_account_file="kodeRahasia_jangandiShare.json")
+
+
+#     # 1. Identitas
+#     st.markdown("### 👤 Identitas Pengguna")
+#     st.json(st.session_state.get("user_identity", "Belum diisi"))
+
+#     st.markdown("---")
+
+#     # 2. Aplikasi 1: Query-Based
+#     st.markdown("### 🔍 Preferensi & Hasil - Aplikasi 1 (Query-Based)")
+#     if "query_input" in st.session_state:
+#         st.markdown("**Preferensi yang dimasukkan:**")
+#         st.json(st.session_state["query_input"])
+#     else:
+#         st.info("Kamu tidak mencoba Aplikasi 1.")
+
+#     if "query_result" in st.session_state:
+#         st.markdown("**Hasil Rekomendasi:**")
+#         for nama_kafe, mention_dict, subaspek_match, total in st.session_state["query_result"]:
+#             st.markdown(f"- ⭐ **{nama_kafe}** — {total} sebutan relevan, {subaspek_match} aspek cocok")
+
+#     st.markdown("---")
+
+#     # 3. Aplikasi 2: CRS
+#     st.markdown("### 🤖 Preferensi & Hasil - Aplikasi 2 (CRS-CBR)")
+
+#     if "crs_keywords" in st.session_state:
+#         st.markdown("**Preferensi (semua keyword):**")
+#         st.code(", ".join(st.session_state["crs_keywords"]))
+
+#     if "crs_preferensi_label" in st.session_state:
+#         st.markdown("**Preferensi label (kategori → sub):**")
+#         st.json(st.session_state["crs_preferensi_label"])
+
+#     # Menampilkan hasil akhir dari CRS (hanya 1 kafe)
+#     if "crs_final_case" in st.session_state:
+#         st.markdown("**Hasil rekomendasi terakhir yang dipilih:**")
+#         kafe_final = st.session_state["crs_final_case"]["selected_kafe"]
+#         hasil = st.session_state.get("crs_result_after_refine") or st.session_state.get("crs_result_before_refine")
+
+#         if hasil:
+#             for row in hasil:
+#                 if row["Nama Kafe"] == kafe_final:
+#                     st.markdown(f"- ⭐ **{kafe_final}** (sim: {row['Similarity']:.2f}, score: {row['FinalScore']:.2f})")
+#                     break
+#         else:
+#             st.markdown(f"- ⭐ **{kafe_final}**")
+#     else:
+#         st.info("Kamu belum memilih kafe akhir dari CRS.")
+
+#     st.markdown("---")
+
+#     # 4. Refinement (jika ada)
+#     st.markdown("### 🛠️ Refinement (Jika dilakukan)")
+#     if st.session_state.get("crs_refine_added") or st.session_state.get("crs_refine_excluded"):
+#         st.markdown("**Preferensi tambahan (dari checkbox):**")
+#         st.code(", ".join(st.session_state.get("crs_refine_added", [])))
+
+#         st.markdown("**Kata yang dihindari:**")
+#         st.code(", ".join(st.session_state.get("crs_refine_excluded", [])))
+#     else:
+#         st.info("Kamu tidak melakukan refinement.")
+
+#     st.markdown("---")
+
+#     # 5. Survey Aplikasi 1
+#     st.markdown("### 📝 Survei Aplikasi 1 (Query-Based)")
+#     if "survey_1_app1_feedback" in st.session_state:
+#         st.json(st.session_state["survey_1_app1_feedback"])
+#     else:
+#         st.info("Belum mengisi survei ini.")
+
+#     # 6. Survey Aplikasi 2
+#     st.markdown("### 📝 Survei Aplikasi 2 (CRS-CBR)")
+#     if "survey_1_app2_feedback" in st.session_state:
+#         st.json(st.session_state["survey_1_app2_feedback"])
+#     else:
+#         st.info("Belum mengisi survei ini.")
+
+#     # 7. Survey Perbandingan
+#     st.markdown("### ⚖️ Survei Perbandingan")
+#     if "survey_2_feedback" in st.session_state:
+#         st.json(st.session_state["survey_2_feedback"])
+#     else:
+#         st.info("Belum mengisi survei ini.")
+
+#     st.markdown("---")
+#     st.success("🎉 Terima kasih banyak! Semua data sudah terekam. 🙏")
+
+#     data_user = {
+#         "dataIdentitas_user" : st.session_state.get("user_identity", "Belum diisi"),
+#         "dataQuery_input" : st.session_state["query_input"],
+#         "dataQuery_result" : st.session_state["query_result"],
+#         "dataCrs_keywords" : st.session_state["crs_keywords"],
+#         "dataCrs_preferensi" : st.session_state["crs_preferensi_label"],
+#         "dataCrs_result_akhir" : st.session_state["crs_final_case"],
+#         "dataCrs_refine_added" : st.session_state.get("crs_refine_added", {}),
+#         "dataCrs_refine_excluded" : st.session_state.get("crs_refine_excluded", {}),
+#         "dataSurvey_1_app1_feedback" : st.session_state["survey_1_app1_feedback"],
+#         "dataSurvey_1_app2_feedback" : st.session_state["survey_1_app2_feedback"],
+#         "dataSurvey_2_feedback" : st.session_state["survey_2_feedback"]
+#     }
+
+
+#     if st.button("💾 Simpan Data ke JSON"):
+#         simpan_data_user()
+#         # append_dict_ke_gsheet(data_user, sheet_name="Sheet1", gsheet_index=0)
+#         success, message = kirim_data_ke_gsheet(
+#             data_user,
+#             spreadsheet_id="1RlsZ4h9FLSX_2J5wNuDn_fBQcVhSAnLe3A7eXqoB9HI",
+#             sheet_name="Sheet1"  # Nama sheet di dalam spreadsheet
+#         )
+#         st.success(message) if success else st.error(message)
+
 def step_pamit():
     st.subheader("🎉 Terima kasih telah berpartisipasi!")
 
     st.markdown("Berikut adalah rangkuman data dari seluruh proses yang telah kamu lalui:")
 
-    gc = pygsheets.authorize(service_account_file="kodeRahasia_jangandiShare.json")
-
+    # ✅ Bagian GSheet: Tidak perlu authorize manual di sini, dilakukan di fungsi kirim
+    # GC pygsheets sudah dipakai di fungsi kirim_data_ke_gsheet()
 
     # 1. Identitas
     st.markdown("### 👤 Identitas Pengguna")
@@ -833,7 +953,7 @@ def step_pamit():
 
     st.markdown("---")
 
-    # 3. Aplikasi 2: CRS
+    # 3. Aplikasi 2: CRS-CBR
     st.markdown("### 🤖 Preferensi & Hasil - Aplikasi 2 (CRS-CBR)")
 
     if "crs_keywords" in st.session_state:
@@ -844,7 +964,7 @@ def step_pamit():
         st.markdown("**Preferensi label (kategori → sub):**")
         st.json(st.session_state["crs_preferensi_label"])
 
-    # Menampilkan hasil akhir dari CRS (hanya 1 kafe)
+    # Tampilkan hasil akhir CRS
     if "crs_final_case" in st.session_state:
         st.markdown("**Hasil rekomendasi terakhir yang dipilih:**")
         kafe_final = st.session_state["crs_final_case"]["selected_kafe"]
@@ -862,12 +982,11 @@ def step_pamit():
 
     st.markdown("---")
 
-    # 4. Refinement (jika ada)
+    # 4. Refinement
     st.markdown("### 🛠️ Refinement (Jika dilakukan)")
     if st.session_state.get("crs_refine_added") or st.session_state.get("crs_refine_excluded"):
-        st.markdown("**Preferensi tambahan (dari checkbox):**")
+        st.markdown("**Preferensi tambahan:**")
         st.code(", ".join(st.session_state.get("crs_refine_added", [])))
-
         st.markdown("**Kata yang dihindari:**")
         st.code(", ".join(st.session_state.get("crs_refine_excluded", [])))
     else:
@@ -875,54 +994,46 @@ def step_pamit():
 
     st.markdown("---")
 
-    # 5. Survey Aplikasi 1
+    # 5. Survei
     st.markdown("### 📝 Survei Aplikasi 1 (Query-Based)")
-    if "survey_1_app1_feedback" in st.session_state:
-        st.json(st.session_state["survey_1_app1_feedback"])
-    else:
-        st.info("Belum mengisi survei ini.")
+    st.json(st.session_state.get("survey_1_app1_feedback", {}))
 
-    # 6. Survey Aplikasi 2
     st.markdown("### 📝 Survei Aplikasi 2 (CRS-CBR)")
-    if "survey_1_app2_feedback" in st.session_state:
-        st.json(st.session_state["survey_1_app2_feedback"])
-    else:
-        st.info("Belum mengisi survei ini.")
+    st.json(st.session_state.get("survey_1_app2_feedback", {}))
 
-    # 7. Survey Perbandingan
     st.markdown("### ⚖️ Survei Perbandingan")
-    if "survey_2_feedback" in st.session_state:
-        st.json(st.session_state["survey_2_feedback"])
-    else:
-        st.info("Belum mengisi survei ini.")
+    st.json(st.session_state.get("survey_2_feedback", {}))
 
     st.markdown("---")
     st.success("🎉 Terima kasih banyak! Semua data sudah terekam. 🙏")
 
+    # ✅ Data yang akan dikirim ke GSheet
     data_user = {
-        "dataIdentitas_user" : st.session_state.get("user_identity", "Belum diisi"),
-        "dataQuery_input" : st.session_state["query_input"],
-        "dataQuery_result" : st.session_state["query_result"],
-        "dataCrs_keywords" : st.session_state["crs_keywords"],
-        "dataCrs_preferensi" : st.session_state["crs_preferensi_label"],
-        "dataCrs_result_akhir" : st.session_state["crs_final_case"],
-        "dataCrs_refine_added" : st.session_state.get("crs_refine_added", {}),
-        "dataCrs_refine_excluded" : st.session_state.get("crs_refine_excluded", {}),
-        "dataSurvey_1_app1_feedback" : st.session_state["survey_1_app1_feedback"],
-        "dataSurvey_1_app2_feedback" : st.session_state["survey_1_app2_feedback"],
-        "dataSurvey_2_feedback" : st.session_state["survey_2_feedback"]
+        "dataIdentitas_user": st.session_state.get("user_identity", {}),
+        "dataQuery_input": st.session_state.get("query_input", {}),
+        "dataQuery_result": st.session_state.get("query_result", []),
+        "dataCrs_keywords": st.session_state.get("crs_keywords", []),
+        "dataCrs_preferensi": st.session_state.get("crs_preferensi_label", {}),
+        "dataCrs_result_akhir": st.session_state.get("crs_final_case", {}),
+        "dataCrs_refine_added": st.session_state.get("crs_refine_added", []),
+        "dataCrs_refine_excluded": st.session_state.get("crs_refine_excluded", []),
+        "dataSurvey_1_app1_feedback": st.session_state.get("survey_1_app1_feedback", {}),
+        "dataSurvey_1_app2_feedback": st.session_state.get("survey_1_app2_feedback", {}),
+        "dataSurvey_2_feedback": st.session_state.get("survey_2_feedback", {})
     }
 
+    # ✅ Tombol Simpan ke JSON + GSheet
+    if st.button("💾 Simpan Data ke JSON & GSheet"):
+        simpan_data_user()  # Simpan ke lokal JSON juga (opsional)
 
-    if st.button("💾 Simpan Data ke JSON"):
-        simpan_data_user()
-        # append_dict_ke_gsheet(data_user, sheet_name="Sheet1", gsheet_index=0)
+        # Kirim ke GSheet
         success, message = kirim_data_ke_gsheet(
             data_user,
             spreadsheet_id="1RlsZ4h9FLSX_2J5wNuDn_fBQcVhSAnLe3A7eXqoB9HI",
-            sheet_name="Sheet1"  # Nama sheet di dalam spreadsheet
+            sheet_name="Sheet1"
         )
         st.success(message) if success else st.error(message)
+
 
 
 
@@ -1219,29 +1330,71 @@ def cari_case_sama(casebase, keywords, preferensi_label):
     return None
 
 
+# def baca_casebase_dari_gsheet(spreadsheet_id, sheet_name="Sheet2"):
+#     import pygsheets
+#     import json
+#     from tempfile import NamedTemporaryFile
+
+#     try:
+#         json_key = dict(st.secrets["gcp_service_account"])
+#         with NamedTemporaryFile(delete=False, suffix=".json", mode="w") as tmp:
+#             json.dump(json_key, tmp)
+#             gc = pygsheets.authorize(service_file=tmp.name)
+
+
+#         # Ubah kolom JSON string jadi dict/list
+#         json_cols = ["crs_keywords", "preferensi_label", "refine_added", "refine_excluded", "user_identity"]
+#         for col in json_cols:
+#             if col in df.columns:
+#                 df[col] = df[col].apply(lambda x: json.loads(x) if isinstance(x, str) and x.strip().startswith("{") or x.strip().startswith("[") else x)
+
+#         return df.to_dict(orient="records")
+
+#     except Exception as e:
+#         st.error(f"❌ Gagal membaca CaseBase dari GSheet: {e}")
+#         return []
+
 def baca_casebase_dari_gsheet(spreadsheet_id, sheet_name="Sheet2"):
     import pygsheets
     import json
+    import pandas as pd
     from tempfile import NamedTemporaryFile
 
     try:
+        # Ambil kredensial dari secrets dan simpan ke file temporer
         json_key = dict(st.secrets["gcp_service_account"])
         with NamedTemporaryFile(delete=False, suffix=".json", mode="w") as tmp:
             json.dump(json_key, tmp)
             gc = pygsheets.authorize(service_file=tmp.name)
 
+        # Buka spreadsheet
+        sh = gc.open_by_key(spreadsheet_id)
+        wks = sh.worksheet_by_title(sheet_name)
+        df = wks.get_as_df()
 
-        # Ubah kolom JSON string jadi dict/list
+        # Kolom-kolom yang akan di-deserialize dari string JSON
         json_cols = ["crs_keywords", "preferensi_label", "refine_added", "refine_excluded", "user_identity"]
+
+        def safe_json_load(x):
+            try:
+                if isinstance(x, str):
+                    x = x.strip()
+                    if x.startswith("{") or x.startswith("["):
+                        return json.loads(x)
+                return x
+            except:
+                return x  # fallback kalau gagal parsing
+
         for col in json_cols:
             if col in df.columns:
-                df[col] = df[col].apply(lambda x: json.loads(x) if isinstance(x, str) and x.strip().startswith("{") or x.strip().startswith("[") else x)
+                df[col] = df[col].apply(safe_json_load)
 
         return df.to_dict(orient="records")
 
     except Exception as e:
         st.error(f"❌ Gagal membaca CaseBase dari GSheet: {e}")
         return []
+
 
 
 def simpan_data_user(filepath="hasil_testing_user.json"):
