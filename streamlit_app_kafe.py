@@ -1354,46 +1354,78 @@ def cari_case_sama(casebase, keywords, preferensi_label):
 #         st.error(f"❌ Gagal membaca CaseBase dari GSheet: {e}")
 #         return []
 
+# def baca_casebase_dari_gsheet(spreadsheet_id, sheet_name="Sheet2"):
+#     import pygsheets
+#     import json
+#     import pandas as pd
+#     from tempfile import NamedTemporaryFile
+
+#     try:
+#         # Ambil kredensial dari secrets dan simpan ke file temporer
+#         json_key = dict(st.secrets["gcp_service_account"])
+#         with NamedTemporaryFile(delete=False, suffix=".json", mode="w") as tmp:
+#             json.dump(json_key, tmp)
+#             gc = pygsheets.authorize(service_file=tmp.name)
+
+#         # Buka spreadsheet
+#         sh = gc.open_by_key(spreadsheet_id)
+#         wks = sh.worksheet_by_title(sheet_name)
+#         df = wks.get_as_df()
+
+#         # Kolom-kolom yang akan di-deserialize dari string JSON
+#         json_cols = ["crs_keywords", "preferensi_label", "refine_added", "refine_excluded", "user_identity"]
+
+#         def safe_json_load(x):
+#             try:
+#                 if isinstance(x, str):
+#                     x = x.strip()
+#                     if x.startswith("{") or x.startswith("["):
+#                         return json.loads(x)
+#                 return x
+#             except:
+#                 return x  # fallback kalau gagal parsing
+
+#         for col in json_cols:
+#             if col in df.columns:
+#                 df[col] = df[col].apply(safe_json_load)
+
+#         return df.to_dict(orient="records")
+
+#     except Exception as e:
+#         st.error(f"❌ Gagal membaca CaseBase dari GSheet: {e}")
+#         return []
+
+
 def baca_casebase_dari_gsheet(spreadsheet_id, sheet_name="Sheet2"):
     import pygsheets
     import json
-    import pandas as pd
-    from tempfile import NamedTemporaryFile
 
     try:
-        # Ambil kredensial dari secrets dan simpan ke file temporer
+        # Gunakan secrets di deploy Streamlit Cloud
         json_key = dict(st.secrets["gcp_service_account"])
-        with NamedTemporaryFile(delete=False, suffix=".json", mode="w") as tmp:
+        import tempfile
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".json", mode="w") as tmp:
             json.dump(json_key, tmp)
-            gc = pygsheets.authorize(service_file=tmp.name)
+            tmp_path = tmp.name
 
-        # Buka spreadsheet
+        gc = pygsheets.authorize(service_file=tmp_path)
         sh = gc.open_by_key(spreadsheet_id)
         wks = sh.worksheet_by_title(sheet_name)
         df = wks.get_as_df()
 
-        # Kolom-kolom yang akan di-deserialize dari string JSON
         json_cols = ["crs_keywords", "preferensi_label", "refine_added", "refine_excluded", "user_identity"]
-
-        def safe_json_load(x):
-            try:
-                if isinstance(x, str):
-                    x = x.strip()
-                    if x.startswith("{") or x.startswith("["):
-                        return json.loads(x)
-                return x
-            except:
-                return x  # fallback kalau gagal parsing
-
         for col in json_cols:
             if col in df.columns:
-                df[col] = df[col].apply(safe_json_load)
+                df[col] = df[col].apply(
+                    lambda x: json.loads(x) if isinstance(x, str) and x.strip() and (x.strip().startswith("{") or x.strip().startswith("[")) else x
+                )
 
         return df.to_dict(orient="records")
 
     except Exception as e:
         st.error(f"❌ Gagal membaca CaseBase dari GSheet: {e}")
         return []
+
 
 
 
