@@ -147,10 +147,10 @@ def step_intro_query():
             st.session_state.step = "query_based"
             st.rerun()
 
-    with col2:
-        if st.button("❌ Nanti aja, lanjut ke Aplikasi 2"):
-            st.session_state.step = "intro_crs"
-            st.rerun()
+    # with col2:
+    #     if st.button("❌ Nanti aja, lanjut ke Aplikasi 2"):
+    #         st.session_state.step = "intro_crs"
+    #         st.rerun()
 
 # from kategori_suasana_dict import kategori_suasana  # ⬅️ taruh di bagian import
 from kategori_suasana_dict_updated import kategori_suasana
@@ -1034,7 +1034,7 @@ def step_pamit():
     if st.button("💾 Simpan Data ke JSON & GSheet"):
         # simpan_data_user()  # Simpan ke lokal JSON juga (opsional)
 
-        st.success("🎉 Terima kasih banyak! Semua data sudah terekam. 🙏")
+        
 
         # Kirim ke GSheet
         success, message = kirim_data_ke_gsheet(
@@ -1043,7 +1043,9 @@ def step_pamit():
             sheet_name="Sheet1"
         )
         # st.success(message) if success else st.error(message)
-
+        
+        st.success("🎉 Terima kasih banyak! Semua data sudah terekam. 🙏")
+        st.success("🔁 Kalau mau coba lagi, silakan **refresh halamannya** ya.")
 
 
 
