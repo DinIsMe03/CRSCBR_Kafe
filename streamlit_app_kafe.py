@@ -1014,7 +1014,6 @@ def step_pamit():
     st.json(st.session_state.get("survey_2_feedback", {}))
 
     st.markdown("---")
-    st.success("🎉 Terima kasih banyak! Semua data sudah terekam. 🙏")
 
     # ✅ Data yang akan dikirim ke GSheet
     data_user = {
@@ -1033,7 +1032,9 @@ def step_pamit():
 
     # ✅ Tombol Simpan ke JSON + GSheet
     if st.button("💾 Simpan Data ke JSON & GSheet"):
-        simpan_data_user()  # Simpan ke lokal JSON juga (opsional)
+        # simpan_data_user()  # Simpan ke lokal JSON juga (opsional)
+
+        st.success("🎉 Terima kasih banyak! Semua data sudah terekam. 🙏")
 
         # Kirim ke GSheet
         success, message = kirim_data_ke_gsheet(
@@ -1041,7 +1042,7 @@ def step_pamit():
             spreadsheet_id="1RlsZ4h9FLSX_2J5wNuDn_fBQcVhSAnLe3A7eXqoB9HI",
             sheet_name="Sheet1"
         )
-        st.success(message) if success else st.error(message)
+        # st.success(message) if success else st.error(message)
 
 
 
