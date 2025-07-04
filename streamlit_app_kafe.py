@@ -668,7 +668,11 @@ def step_crs_compare():
 
 
         ok, msg = simpan_case_ke_gsheet_casebase(case, spreadsheet_id="1RlsZ4h9FLSX_2J5wNuDn_fBQcVhSAnLe3A7eXqoB9HI", sheet_name="Sheet2")
-        st.success(msg) if ok else st.error(msg)
+        # st.success(msg) if ok else st.error(msg)
+        st.write("💬 Isi msg:")
+        st.write(type(msg), msg)
+
+        st.success(str(msg)) if ok else st.error(str(msg))
 
 
         # if os.path.exists("casebase.json"):
