@@ -320,7 +320,7 @@ def step_crs_cbr():
 
     if case_match:
         st.markdown("🔁 Preferensi kamu **pernah dicari oleh user sebelumnya.**")
-        st.markdown(f"📌 Kafe yang dipilih oleh user sebelumnya: **{case_match['selected_kafe']}**")
+        # st.markdown(f"📌 Kafe yang dipilih oleh user sebelumnya: **{case_match['selected_kafe']}**")
 
         lihat_lama = st.button("👀 Lihat Hasil User Sebelumnya")
         rekomendasi_baru = st.button("🧠 Cari Rekomendasi Baru")
