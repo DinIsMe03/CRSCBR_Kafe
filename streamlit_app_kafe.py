@@ -430,9 +430,9 @@ def step_crs_cbr():
                 # simpan_case_ke_gsheet_casebase(case, spreadsheet_id="1RlsZ4h9FLSX_2J5wNuDn_fBQcVhSAnLe3A7eXqoB9HI", sheet_name="Sheet2")
                 ok, msg = simpan_case_ke_gsheet_casebase(case, spreadsheet_id="1RlsZ4h9FLSX_2J5wNuDn_fBQcVhSAnLe3A7eXqoB9HI", sheet_name="Sheet2")
                 # st.success(msg) if ok else st.error(msg)
-                st.write("Debug msg:", msg)
-                st.write("Type of msg:", type(msg))
-                st.success(str(msg)) if ok else st.error(str(msg))
+                # st.write("Debug msg:", msg)
+                # st.write("Type of msg:", type(msg))
+                # st.success(str(msg)) if ok else st.error(str(msg))
 
 
 
