@@ -1491,9 +1491,15 @@ def kirim_data_ke_gsheet(data_dict, spreadsheet_id, sheet_name="hasil_user_testi
     import pygsheets
     import json
     import pandas as pd
+    import tempfile
 
     try:
-        gc = pygsheets.authorize(service_file=file_json_handler)  # 🟢 untuk lokal
+        # gc = pygsheets.authorize(service_file=file_json_handler)  # 🟢 untuk lokal
+        if "gcp_service_account" in st.secrets:
+            json_key = dict(st.secrets["gcp_service_account"])
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".json", mode="w") as tmp:
+                json.dump(json_key, tmp)
+                service_file_path = tmp.name
 
         sh = gc.open_by_key(spreadsheet_id)
         wks = sh.worksheet_by_title(sheet_name)
