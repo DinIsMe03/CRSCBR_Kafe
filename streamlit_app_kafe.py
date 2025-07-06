@@ -240,18 +240,23 @@ def step_intro_crs():
     st.subheader("🤖 Aplikasi 2: Conversational Case-Based Reasoning (CRS-CBR)")
 
     st.markdown("""
-    Sistem ini akan merekomendasikan kafe berdasarkan **kemiripan makna preferensi suasana** yang kamu sebutkan, bukan sekadar mencocokkan kata.
-
-    Algoritma yang digunakan:
-    - Word2Vec untuk menangkap makna kata
-    - Cosine similarity untuk mengukur kedekatan
-    - Penalti diberikan jika review banyak mengandung kritik atau sentimen rendah
-
-    Kamu bisa memberikan:
-    - Kata kunci suasana atau kebutuhanmu
-    - Refinement jika hasil belum sesuai (contoh: hindari yang berisik)
-
-    Yuk, kita coba!
+    Sistem ini akan membantu kamu menemukan kafe yang paling cocok dengan suasana yang kamu inginkan, bukan hanya berdasarkan kesamaan kata, tapi juga kesamaan makna.
+    
+    🧠 Bagaimana cara kerjanya?
+    
+    Sistem menggunakan teknologi yang bisa memahami arti kata-kata yang kamu pilih
+    
+    Hasil akan dihitung berdasarkan seberapa mirip maknanya dengan suasana di kafe
+    
+    Jika banyak ulasan negatif atau suasananya tidak nyaman, nilainya akan dikurangi
+    
+    💡 Apa yang bisa kamu lakukan?
+    
+    Pilih suasana atau kebutuhan kafe yang kamu cari (misalnya: tenang, ada wifi, cocok untuk kerja)
+    
+    Jika hasil belum sesuai, kamu bisa melakukan refinement, misalnya: “hindari yang berisik” atau “cari yang lebih sepi”
+    
+    ✨ Yuk, kita mulai dan temukan kafe yang paling cocok buat kamu!
     """)
 
     if st.button("➡️ Masukkan Preferensi"):
