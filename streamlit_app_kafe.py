@@ -1078,10 +1078,14 @@ def query_filter_kafe(df_review, keyword_list):
 def int_default():
     return defaultdict(int)
 
+@st.cache_data
 def get_keyword_mentions_per_kafe(df_review, keywords):
+    hasil = defaultdict(int_default)  # gunakan fungsi global tadi
     hasil = {}
 
     for _, row in df_review.iterrows():
+        nama_kafe = row['Nama Kafe']
+        tokens = row['tokens_negated_indo'] + row['tokens_negated_english']
         nama_kafe = row["Nama Kafe"]
         tokens = row["tokens_negated_indo"] + row["tokens_negated_english"]
 
@@ -1089,6 +1093,7 @@ def get_keyword_mentions_per_kafe(df_review, keywords):
             hasil[nama_kafe] = {}
 
         for k in keywords:
+            hasil[nama_kafe][k] += tokens.count(k.lower())
             hasil[nama_kafe][k] = hasil[nama_kafe].get(k, 0) + tokens.count(k.lower())
 
     return hasil
