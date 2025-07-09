@@ -640,6 +640,7 @@ def step_crs_compare():
     jumlah_refine = max(0, len(st.session_state.get("refine_logs", [])) - 1)
     st.markdown(f"🔁 Jumlah iterasi refinement: {jumlah_refine}")
 
+    refine_logs = st.session_state.get("refine_logs", [])
     if refine_logs:
         for log in refine_logs:
             iterasi = log.get("iteration", "-") + 1  # +1 biar user-friendly mulai dari 1
