@@ -640,27 +640,22 @@ def step_crs_compare():
     jumlah_refine = max(0, len(st.session_state.get("refine_logs", [])) - 1)
     st.markdown(f"🔁 Jumlah iterasi refinement: {jumlah_refine}")
 
-    refine_logs = st.session_state.get("refine_logs", [])
-    if refine_logs:
-        for log in refine_logs:
-            iterasi = log.get("iteration", "-") + 1  # +1 biar user-friendly mulai dari 1
-            label_keys = list(log.get("preferensi_label", {}).values())
-            refine_excluded = log.get("refine_excluded", [])
-    
-            st.markdown(f"### Iterasi {iterasi}:")
-    
-            # Preferensi ditambahkan ditampilkan dalam bentuk sub_label
-            if label_keys:
-                st.markdown(f"- ➕ Preferensi Ditambahkan: {', '.join(label_keys)}")
-            else:
-                st.markdown(f"- ➕ Preferensi Ditambahkan: (tidak ada)")
-    
-            if refine_excluded:
-                st.markdown(f"- 🚫 Kata Dihindari: {', '.join(refine_excluded)}")
-            else:
-                st.markdown(f"- 🚫 Kata Dihindari: (tidak ada)")
 
-    st.json(st.session_state.get("refine_logs", []))
+    refine_logs = st.session_state.get("refine_logs", [])
+    if len(refine_logs) > 1:
+        st.markdown(f"🔁 Jumlah iterasi refinement: {len(refine_logs) - 1}")
+    
+        for log in refine_logs[1:]:  # Skip awal (iterasi 0)
+            iter_ke = log.get("iteration", "?")
+            preferensi_dict = log.get("preferensi_label", {})
+            added = list(preferensi_dict.values())
+            excluded = log.get("refine_excluded", [])
+    
+            st.markdown(f"### 🔄 Iterasi {iter_ke}:")
+            st.markdown(f"- ➕ Preferensi Ditambahkan: {', '.join(added) if added else '(tidak ada)'}")
+            st.markdown(f"- 🚫 Kata Dihindari: {', '.join(excluded) if excluded else '(tidak ada)'}")
+
+
 
     added = st.session_state.get("crs_refine_added", [])
     excluded = st.session_state.get("crs_refine_excluded", [])
