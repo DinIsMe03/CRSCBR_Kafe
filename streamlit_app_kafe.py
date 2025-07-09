@@ -638,11 +638,10 @@ def step_crs_compare():
     label_keywords = list(preferensi_label.values())
     st.markdown(f"💬 **Preferensi setelah refinement:** {', '.join(label_keywords) or '-'}")
     jumlah_refine = max(0, len(st.session_state.get("refine_logs", [])) - 1)
-    st.markdown(f"🔁 Jumlah iterasi refinement: {jumlah_refine}")
-
 
     refine_logs = st.session_state.get("refine_logs", [])
     if len(refine_logs) > 1:
+        jumlah_refine = max(0, len(st.session_state.get("refine_logs", [])) - 1)
         st.markdown(f"🔁 Jumlah iterasi refinement: {len(refine_logs) - 1}")
     
         for log in refine_logs[1:]:  # Skip awal (iterasi 0)
