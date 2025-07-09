@@ -439,7 +439,8 @@ def step_crs_cbr():
                     "refine_excluded": st.session_state.get("crs_refine_excluded", []),
                     "compare_choice": "Langsung puas",
                     "user_identity": st.session_state.get("user_identity", {}),
-                    "refine_logs": st.session_state.get("refine_logs", [])
+                    "refine_logs": st.session_state.get("refine_logs", []),
+                    "refine_iteration_count": len(st.session_state.get("refine_logs", []))
                 }
 
                 st.session_state.crs_final_case = case
@@ -489,6 +490,10 @@ def step_crs_refine():
 
     prev_keywords = st.session_state.get("crs_keywords", [])
     st.markdown(f"💬 Preferensi awal kamu: **{', '.join(prev_keywords)}**")
+
+
+    if "refine_logs" not in st.session_state:
+    st.session_state.refine_logs = []
 
     # ✅ Checkbox UI untuk tambah/kurangi preferensi (sudah disamakan)
     tambah_keywords_dict = {}
@@ -591,17 +596,24 @@ def step_crs_refine():
 
         st.session_state.crs_preferensi_label = preferensi_label
 
-        # Simpan log refinement iterasi ke-n
-        if "refine_logs" not in st.session_state:
-            st.session_state.refine_logs = []
+        # Hitung iterasi sekarang
+        iteration_now = len(st.session_state.get("refine_logs", []))
         
-        st.session_state.refine_logs.append({
-            "iteration": len(st.session_state.refine_logs),
+        # Buat log iterasi saat ini
+        log_iterasi = {
+            "iteration": iteration_now,
             "keywords": full_keywords,
             "refine_added": full_keywords,
             "refine_excluded": hindari_input,
             "preferensi_label": preferensi_label
-        })
+        }
+        
+        # Simpan ke refine_logs
+        if "refine_logs" not in st.session_state:
+            st.session_state.refine_logs = []
+        
+        st.session_state.refine_logs.append(log_iterasi)
+
 
         st.session_state.step = "crs_compare"
         st.rerun()
@@ -625,7 +637,7 @@ def step_crs_compare():
     preferensi_label = st.session_state.get("crs_preferensi_label", {})
     label_keywords = list(preferensi_label.values())
     st.markdown(f"💬 **Preferensi setelah refinement:** {', '.join(label_keywords) or '-'}")
-    st.markdown(f"Jumlah iterasi refinement: {len(st.session_state.get('refine_logs', []))}")
+    st.markdown(f"🔁 Jumlah iterasi refinement: {len(st.session_state.refine_logs)}")
     st.json(st.session_state.get("refine_logs", []))
 
     added = st.session_state.get("crs_refine_added", [])
@@ -706,7 +718,8 @@ def step_crs_compare():
             "refine_excluded": excluded,
             "compare_choice": pilihan,
             "user_identity": st.session_state.get("user_identity", {}),
-            "refine_logs": st.session_state.get("refine_logs", [])
+            "refine_logs": st.session_state.get("refine_logs", []),
+            "refine_iteration_count": len(st.session_state.get("refine_logs", [])),
         }
 
         st.session_state.crs_final_case = case
