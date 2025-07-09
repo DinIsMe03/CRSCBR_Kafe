@@ -278,6 +278,9 @@ def step_crs_cbr():
     💡 Cocok untuk kamu yang ingin mendapatkan saran dari sistem secara pintar berdasarkan konteks.
     """)
 
+    # Inisialisasi refine_logs jika belum ada
+    if "refine_logs" not in st.session_state:
+        st.session_state["refine_logs"] = []
     preferensi_dict = {}
     preferensi_label = {}
 
@@ -375,6 +378,14 @@ def step_crs_cbr():
         st.session_state.crs_has_run = True
         st.session_state.crs_preferensi_label = preferensi_label
         st.session_state.crs_refine_excluded = []
+    # Log iterasi 0
+    st.session_state.refine_logs = [{
+        "iteration": 0,
+        "keywords": all_keywords,
+        "refine_added": [],
+        "refine_excluded": [],
+        "preferensi_label": preferensi_label
+    }]
 
     if st.session_state.get("crs_has_run"):
         st.success("✨ TOP 5 REKOMENDASI KAFE:")
@@ -427,7 +438,8 @@ def step_crs_cbr():
                     "refine_added": [],
                     "refine_excluded": st.session_state.get("crs_refine_excluded", []),
                     "compare_choice": "Langsung puas",
-                    "user_identity": st.session_state.get("user_identity", {})
+                    "user_identity": st.session_state.get("user_identity", {}),
+                    "refine_logs": st.session_state.get("refine_logs", [])
                 }
 
                 st.session_state.crs_final_case = case
@@ -486,7 +498,7 @@ def step_crs_refine():
             for sub_label, keyword_list in sub_dict.items():
                 checkbox_key = f"refine_{kategori}_{sub_label}"
                 # ✅ Preferensi yang sudah ada di awal otomatis tercentang
-                already_selected = any(kw in prev_keywords for kw in keyword_list)
+                already_selected = all(kw in prev_keywords for kw in keyword_list)
                 if st.checkbox(sub_label.title(), key=checkbox_key, value=already_selected):
                     tambah_keywords_dict[sub_label] = keyword_list
 
@@ -579,6 +591,18 @@ def step_crs_refine():
 
         st.session_state.crs_preferensi_label = preferensi_label
 
+        # Simpan log refinement iterasi ke-n
+        if "refine_logs" not in st.session_state:
+            st.session_state.refine_logs = []
+        
+        st.session_state.refine_logs.append({
+            "iteration": len(st.session_state.refine_logs),
+            "keywords": full_keywords,
+            "refine_added": full_keywords,
+            "refine_excluded": hindari_input,
+            "preferensi_label": preferensi_label
+        })
+
         st.session_state.step = "crs_compare"
         st.rerun()
 
@@ -601,9 +625,21 @@ def step_crs_compare():
     preferensi_label = st.session_state.get("crs_preferensi_label", {})
     label_keywords = list(preferensi_label.values())
     st.markdown(f"💬 **Preferensi setelah refinement:** {', '.join(label_keywords) or '-'}")
+    st.markdown(f"🧠 Jumlah iterasi refinement: **{len(st.session_state.refine_logs)}**")
 
     added = st.session_state.get("crs_refine_added", [])
     excluded = st.session_state.get("crs_refine_excluded", [])
+    # Simpan iterasi baru ke refine_logs
+    if "refine_logs" not in st.session_state:
+        st.session_state.refine_logs = []
+    
+    st.session_state.refine_logs.append({
+        "iteration": len(st.session_state.refine_logs),
+        "keywords": keywords,
+        "refine_added": added,
+        "refine_excluded": excluded,
+        "preferensi_label": preferensi_label
+    })
 
     if added:
         st.markdown(f"➕ **Preferensi tambahan:** {', '.join(added)}")
@@ -657,6 +693,14 @@ def step_crs_compare():
         kafe_list = [row["Nama Kafe"] for row in after]
 
     st.markdown("---")
+    st.info("Kalau hasil ini masih belum cocok juga, kamu bisa refine lagi.")
+    
+    if st.button("🔁 Refinement Masih Belum Memuaskan"):
+        st.session_state.step = "crs_refine"
+        st.rerun()
+
+    
+    st.markdown("---")
     st.markdown("### 📌 Pilih salah satu kafe final yang menurut kamu PALING cocok:")
     selected_kafe = st.radio("Pilih kafe:", kafe_list, key="kafe_final")
 
@@ -671,7 +715,8 @@ def step_crs_compare():
             "refine_added": added,
             "refine_excluded": excluded,
             "compare_choice": pilihan,
-            "user_identity": st.session_state.get("user_identity", {})
+            "user_identity": st.session_state.get("user_identity", {}),
+            "refine_logs": st.session_state.get("refine_logs", [])
         }
 
         st.session_state.crs_final_case = case
@@ -1028,6 +1073,7 @@ def step_pamit():
         "dataCrs_keywords": st.session_state.get("crs_keywords", []),
         "dataCrs_preferensi": st.session_state.get("crs_preferensi_label", {}),
         "dataCrs_result_akhir": st.session_state.get("crs_final_case", {}),
+        "dataCrs_refine_logs": st.session_state.get("refine_logs", []),
         "dataCrs_refine_added": st.session_state.get("crs_refine_added", []),
         "dataCrs_refine_excluded": st.session_state.get("crs_refine_excluded", []),
         "dataSurvey_1_app1_feedback": st.session_state.get("survey_1_app1_feedback", {}),
