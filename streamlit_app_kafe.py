@@ -646,7 +646,7 @@ def step_crs_compare():
     excluded = st.session_state.get("crs_refine_excluded", [])
 
     if added:
-        st.markdown(f"➕ **Preferensi tambahan:** {', '.join(added)}")
+        st.markdown(f"➕ **Preferensi yang dipilih:** {', '.join(added)}")
     if excluded:
         st.markdown(f"🚫 **Kata yang dihindari:** {', '.join(excluded)}")
 
