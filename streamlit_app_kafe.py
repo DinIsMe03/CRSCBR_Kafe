@@ -625,21 +625,11 @@ def step_crs_compare():
     preferensi_label = st.session_state.get("crs_preferensi_label", {})
     label_keywords = list(preferensi_label.values())
     st.markdown(f"💬 **Preferensi setelah refinement:** {', '.join(label_keywords) or '-'}")
-    st.markdown(f"🧠 Jumlah iterasi refinement: **{len(st.session_state.refine_logs)}**")
+    st.markdown(f"Jumlah iterasi refinement: {len(st.session_state.get('refine_logs', []))}")
+    st.json(st.session_state.get("refine_logs", []))
 
     added = st.session_state.get("crs_refine_added", [])
     excluded = st.session_state.get("crs_refine_excluded", [])
-    # Simpan iterasi baru ke refine_logs
-    if "refine_logs" not in st.session_state:
-        st.session_state.refine_logs = []
-    
-    st.session_state.refine_logs.append({
-        "iteration": len(st.session_state.refine_logs),
-        "keywords": keywords,
-        "refine_added": added,
-        "refine_excluded": excluded,
-        "preferensi_label": preferensi_label
-    })
 
     if added:
         st.markdown(f"➕ **Preferensi tambahan:** {', '.join(added)}")
