@@ -659,10 +659,6 @@ def step_crs_compare():
     added = st.session_state.get("crs_refine_added", [])
     excluded = st.session_state.get("crs_refine_excluded", [])
 
-    if preferensi_label:
-        st.markdown(f"➕ **Preferensi yang dipilih:** {', '.join(preferensi_label.values())}")
-    if excluded:
-        st.markdown(f"🚫 **Kata yang dihindari:** {', '.join(excluded)}")
 
     st.markdown("---")
 
