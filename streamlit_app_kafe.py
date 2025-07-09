@@ -493,7 +493,7 @@ def step_crs_refine():
 
 
     if "refine_logs" not in st.session_state:
-    st.session_state.refine_logs = []
+        st.session_state.refine_logs = []
 
     # ✅ Checkbox UI untuk tambah/kurangi preferensi (sudah disamakan)
     tambah_keywords_dict = {}
