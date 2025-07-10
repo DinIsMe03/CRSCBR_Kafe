@@ -337,7 +337,8 @@ def step_crs_cbr():
             st.session_state.crs_keywords = all_keywords
             st.session_state.crs_preferensi_label = case_match["preferensi_label"]
             st.session_state.crs_refine_excluded = case_match.get("refine_excluded", [])
-
+            st.session_state.crs_from_user_lain = case_match.get("user_identity", {}).get("nama", "User Sebelumnya")
+            
             query_vec = make_query_vector(all_keywords, model_w2v)
             similarity_scores = cosine_similarity(query_vec, X_matrix)[0]
 
@@ -440,7 +441,8 @@ def step_crs_cbr():
                     "compare_choice": "Langsung puas",
                     "user_identity": st.session_state.get("user_identity", {}),
                     "refine_logs": st.session_state.get("refine_logs", []),
-                    "refine_iteration_count": len(st.session_state.get("refine_logs", []))
+                    "refine_iteration_count": len(st.session_state.get("refine_logs", [])),
+                    "source_user": st.session_state.get("crs_from_user_lain")
                 }
 
                 st.session_state.crs_final_case = case
@@ -1080,6 +1082,11 @@ def step_pamit():
 
     st.markdown("---")
 
+    case_result = st.session_state.get("crs_final_case", {}).copy()
+
+    if "source_user" in case_result and case_result["source_user"]:
+        case_result["diambil_dari"] = case_result["source_user"]
+        
     # ✅ Data yang akan dikirim ke GSheet
     data_user = {
         "dataIdentitas_user": st.session_state.get("user_identity", {}),
@@ -1087,7 +1094,7 @@ def step_pamit():
         "dataQuery_result": st.session_state.get("query_result", []),
         "dataCrs_keywords": st.session_state.get("crs_keywords", []),
         "dataCrs_preferensi": st.session_state.get("crs_preferensi_label", {}),
-        "dataCrs_result_akhir": st.session_state.get("crs_final_case", {}),
+        "dataCrs_result_akhir": case_result,
         "dataCrs_refine_logs": st.session_state.get("refine_logs", []),
         "dataCrs_refine_added": st.session_state.get("crs_refine_added", []),
         "dataCrs_refine_excluded": st.session_state.get("crs_refine_excluded", []),
