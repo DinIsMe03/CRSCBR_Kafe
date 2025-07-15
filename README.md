@@ -22,3 +22,9 @@ Untuk menjalankan program secara lokal, file yang digunakan adalah:
 Dengan catatan: pada file streamlit_app_kafe.py, harus memodifikasi terlebih dahulu beberapa fungsi agar sistem berjalan normal.
 Fungsi yang digunakan di dalam aplikasi saat ini menggunakan data yang disimpan pada cloud service untuk menambah dan membaca case-base.
 Jika fungsi membaca/menambah case-base dihilangkan, sistem masih bisa bekerja untuk menyediakan rekomendasi dengan menggunakan cosine similarity.
+
+
+---
+
+Terdapat jg versi Prototype yang saya simpan id jupyter notebook
+- https://colab.research.google.com/drive/1pZN_trxlCkwC2z0qp5iMOAV332jiz9CC?usp=sharing
