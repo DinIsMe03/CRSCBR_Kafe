@@ -9,15 +9,15 @@ Untuk mencoba demo aplikasi: https://rekomendasi-kafe-crscbr.streamlit.app/
 
 Untuk menjalankan program secara lokal, file yang digunakan adalah:
 
-streamlit_app_kafe.py
+- streamlit_app_kafe.py
 
-hasil_skor_dan_aspek.xlsx
+- hasil_skor_dan_aspek.xlsx
 
-case_vector_df.pkl
+- case_vector_df.pkl
 
-tokens_library.txt
+- tokens_library.txt
 
-word2vec_model.model
+- word2vec_model.model
 
 Dengan catatan: pada file streamlit_app_kafe.py, harus memodifikasi terlebih dahulu beberapa fungsi agar sistem berjalan normal.
 Fungsi yang digunakan di dalam aplikasi saat ini menggunakan data yang disimpan pada cloud service untuk menambah dan membaca case-base.
